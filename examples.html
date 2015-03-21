@@ -1,0 +1,103 @@
+<! DOCTYPE html !>
+<html>
+
+<head>
+    <title>Message flow</title>
+    <script src="/raphael-min.js"></script>
+</head>
+
+<body>
+
+    <h1> Please Drag Circles</h1>
+
+    <script>
+    function Line(startX, startY, endX, endY, raphael) {
+        var start = {
+            x: startX,
+            y: startY
+        };
+        var end = {
+            x: endX,
+            y: endY
+        };
+        var getPath = function() {
+            return "M" + start.x + " " + start.y + " L" + end.x + " " + end.y;
+        };
+        var redraw = function() {
+            node.attr("path", getPath());
+        }
+
+        var node = raphael.path(getPath());
+        return {
+            updateStart: function(x, y) {
+                start.x = x;
+                start.y = y;
+                redraw();
+                return this;
+            },
+            updateEnd: function(x, y) {
+                end.x = x;
+                end.y = y;
+                redraw();
+                return this;
+            }
+        };
+    };
+
+    window.onload = function() {
+        var R = Raphael(0, 0, "100%", "100%");
+        var start = function() {
+                this.ox = this.attr("cx");
+                this.oy = this.attr("cy");
+                this.animate({
+                    r: 70,
+                    opacity: .25
+                }, 500, ">");
+            },
+            move = function(dx, dy) {
+                this.attr({
+                    cx: this.ox + dx,
+                    cy: this.oy + dy
+                });
+
+                var x1 = 150,
+                    y1 = 150,
+                    x2 = this.getBBox().x,
+                    y2 = this.getBBox().y;
+                Line(x1, y1, x2, y2, R);
+            },
+            up = function() {
+                this.animate({
+                    r: 50,
+                    opacity: .5
+                }, 500, ">");
+            };
+        for (var i = 0; i < 400; ++i) {
+            r = R.circle(100, 100, 50).attr({
+                    fill: "hsb(0, 1, 1)",
+                    stroke: "none",
+                    opacity: .5
+                }),
+                g = R.circle(210, 100, 50).attr({
+                    fill: "hsb(.3, 1, 1)",
+                    stroke: "none",
+                    opacity: .5
+                }),
+                b = R.circle(320, 100, 50).attr({
+                    fill: "hsb(.6, 1, 1)",
+                    stroke: "none",
+                    opacity: .5
+                }),
+                p = R.circle(430, 100, 50).attr({
+                    fill: "hsb(.8, 1, 1)",
+                    stroke: "none",
+                    opacity: .5
+                });
+            R.set(r, g, b, p).drag(move, start, up);
+        }
+    };
+    </script>
+
+</body>
+
+</html>
